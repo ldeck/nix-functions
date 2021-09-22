@@ -51,29 +51,30 @@ let
     '';
   };
 
-  chrome = if (stdenv.isDarwin)
-           then (pkgs.callPackage ./app.nix rec {
-             name = "Chromium";
-             version = chromeSpec.version;
-             sourceRoot = "chrome-mac/${name}.app";
-             src = mkChromiumUrl {
-               platform = chromeSpec.platform;
-               basePosition = chromeSpec.basePosition;
-               archivename = "chrome-mac";
-               generation = chromeSpec.browserGeneration;
-               sha256 = chromeSpec.browserSha256;
-               version = chromeSpec.version;
-             };
-             description = "Chromium is an open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web.";
-             homepage = "https://chromium.org/Home";
-             appcast = "https://chromiumdash.appspot.com/releases?platform=Mac";
-             relpath = "Applications/Chromium.app/Contents/MacOS/Chromium";
-           })
-           else
-             pkgs.chromium.overrideAttrs(oldAttrs: rec {
-               relpath = "chrome";
-               # TODO
-             });
+  chrome =
+    if (stdenv.isDarwin)
+    then (pkgs.callPackage ./app.nix rec {
+      name = "Chromium";
+      version = chromeSpec.version;
+      sourceRoot = "chrome-mac/${name}.app";
+      src = mkChromiumUrl {
+        platform = chromeSpec.platform;
+        basePosition = chromeSpec.basePosition;
+        archivename = "chrome-mac";
+        generation = chromeSpec.browserGeneration;
+        sha256 = chromeSpec.browserSha256;
+        version = chromeSpec.version;
+      };
+      description = "Chromium is an open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web.";
+      homepage = "https://chromium.org/Home";
+      appcast = "https://chromiumdash.appspot.com/releases?platform=Mac";
+      relpath = "Applications/Chromium.app/Contents/MacOS/Chromium";
+    })
+    else
+      pkgs.chromium.overrideAttrs(oldAttrs: rec {
+        relpath = "chrome";
+        # TODO
+      });
 
   chrome-wrapper = pkgs.writeShellScriptBin "chrome-wrapper" ''
     exec "${chrome}/${chrome.relpath}"
@@ -87,11 +88,11 @@ in buildEnv {
     chrome-wrapper
   ];
   passthru = {
-    chrome = {
+    app = {
       path = "${chrome}/${chrome.relpath}";
       home = "${chrome}";
     };
-    chromedriver = {
+    driver = {
       home = "${chromedriver}";
       path = "${chromedriver}/bin/chromedriver";
     };
