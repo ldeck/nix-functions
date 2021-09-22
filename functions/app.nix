@@ -18,7 +18,7 @@
 }:
 
 if stdenv.isDarwin then
-  [(stdenv.mkDerivation {
+  (stdenv.mkDerivation {
     name = "${name}-${version}";
     version = "${version}";
     src = src;
@@ -35,6 +35,6 @@ if stdenv.isDarwin then
       maintainers = [ "ldeck <ldeck@example.com>" ];
       platforms = lib.platforms.darwin;
     };
-  })]
+  })
 else
-  []
+  abort "only darwin apps supported atm"

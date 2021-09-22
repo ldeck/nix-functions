@@ -75,8 +75,8 @@ let
                # TODO
              });
 
-  chrome-wrapper = writeShellScriptBin "chrome-wrapper" ''
-    exec "${chrome}/${chrome.relpath}"
+  chrome-wrapper = pkgs.writeShellScriptBin "chrome-wrapper" ''
+    exec "''${chrome}/''${chrome.relpath}"
   '';
 
 in buildEnv {
