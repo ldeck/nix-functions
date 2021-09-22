@@ -76,7 +76,7 @@ let
              });
 
   chrome-wrapper = pkgs.writeShellScriptBin "chrome-wrapper" ''
-    exec "''${chrome}/''${chrome.relpath}"
+    exec "${chrome}/${chrome.relpath}"
   '';
 
 in buildEnv {
@@ -86,4 +86,18 @@ in buildEnv {
     chromedriver
     chrome-wrapper
   ];
+  passthru = {
+    chrome = {
+      path = "${chrome}/${chrome.relpath}";
+      home = "${chrome}";
+    };
+    chromedriver = {
+      home = "${chromedriver}";
+      path = "${chromedriver}/bin/chromedriver";
+    };
+    wrapper = {
+      home = "${chrome-wrapper}";
+      path = "${chrome-wrapper}/bin/chrome-wrapper";
+    };
+  };
 }
