@@ -1,16 +1,25 @@
+# chromeSpec = rec {
+#   basePosition = "800208";
+#   platform = "Mac";
+#   system = "mac64";
+#   browserGeneration = "1597949046060527";
+#   browserSha256 = "02ssw8gwk38pj5r1yk0zz3rph93k63c20390x4v5g9wpyp8rzx56";
+#   driverGeneration = "1597949061202635";
+#   driverSha256 = "13r70wha4pzpk57g25wvxhi794xqydvncjny3vmx1sxx48r33ywr";
+#   version = version;
+# }
+
 {
   pkgs ? import <nixpkgs> {},
   name ? "chromium-with-driver",
-  platform,
-  basePosition,
-  system,
-  browserGeneration,
-  browserSha256,
-  driverGeneration,
-  driverSha256,
-  version,
+  chromeSpec
 }:
 with pkgs;
+
+# NB: it's painful finding the matching versions
+# https://www.chromium.org/getting-involved/download-chromium
+# https://chromedriver.chromium.org/getting-started
+# https://chromedriver.chromium.org/downloads
 
 let
   mkChromiumUrl =
@@ -23,15 +32,15 @@ let
     };
 
   chromedriver = stdenv.mkDerivation rec {
-    name = "chromedriver-${version}";
-    version = version;
+    name = "chromedriver-${chromeSpec.version}";
+    version = chromeSpec.version;
     src = mkChromiumUrl {
-      platform = platform;
-      basePosition = basePosition;
-      archivename = "chromedriver_${system}";
-      generation = driverGeneration;
-      sha256 = driverSha256;
-      version = version;
+      platform = chromeSpec.platform;
+      basePosition = chromeSpec.basePosition;
+      archivename = "chromedriver_${chromeSpec.system}";
+      generation = chromeSpec.driverGeneration;
+      sha256 = chromeSpec.driverSha256;
+      version = chromeSpec.version;
     };
     nativeBuildInputs = [ unzip ];
     buildInputs = [ unzip ];
@@ -43,17 +52,17 @@ let
   };
 
   chrome = if (stdenv.isDarwin)
-           then (installCustomApplication rec {
+           then (pkgs.callPackage ./app.nix rec {
              name = "Chromium";
-             version = version;
+             version = chromeSpec.version;
              sourceRoot = "chrome-mac/${name}.app";
              src = mkChromiumUrl {
-               platform = platform;
-               basePosition = basePosition;
+               platform = chromeSpec.platform;
+               basePosition = chromeSpec.basePosition;
                archivename = "chrome-mac";
-               generation = browserGeneration;
-               sha256 = browserSha256;
-               version = version;
+               generation = chromeSpec.browserGeneration;
+               sha256 = chromeSpec.browserSha256;
+               version = chromeSpec.version;
              };
              description = "Chromium is an open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web.";
              homepage = "https://chromium.org/Home";
