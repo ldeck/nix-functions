@@ -81,7 +81,7 @@ let
 
 in buildEnv {
   name = name;
-  buildInputs = [
+  paths = [
     chrome
     chromedriver
     chrome-wrapper
