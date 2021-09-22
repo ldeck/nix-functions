@@ -51,6 +51,11 @@ let
     '';
   };
 
+  relativePath =
+    if stdenv.isDarwin
+    then "Applications/Chromium.app/Contents/MacOS/Chromium"
+    else "bin/chromium";
+
   chrome =
     if (stdenv.isDarwin)
     then (pkgs.callPackage ./app.nix rec {
@@ -68,16 +73,12 @@ let
       description = "Chromium is an open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web.";
       homepage = "https://chromium.org/Home";
       appcast = "https://chromiumdash.appspot.com/releases?platform=Mac";
-      relpath = "Applications/Chromium.app/Contents/MacOS/Chromium";
     })
     else
-      pkgs.chromium.overrideAttrs(oldAttrs: rec {
-        relpath = "chrome";
-        # TODO
-      });
+      pkgs.chromium;
 
   chrome-wrapper = pkgs.writeShellScriptBin "chrome-wrapper" ''
-    exec "${chrome}/${chrome.relpath}"
+    exec "${chrome}/${relativePath}"
   '';
 
 in buildEnv {
@@ -89,7 +90,7 @@ in buildEnv {
   ];
   passthru = {
     app = {
-      path = "${chrome}/${chrome.relpath}";
+      path = "${chrome}/${relativePath}";
       home = "${chrome}";
     };
     driver = {
