@@ -1,18 +1,32 @@
 # nix-functions
 
-Various useful nix function derivations
+Various useful nix and shell function derivations.
 
-## Overview ##
+## Quick start ##
 
-### macOS ###
+    niv add ldeck/nix-functions --name ldeck-functions
 
-#### app ####
+## Functions overview ##
+
+All the following examples assume you've imported ldeck/nix-functions as `functions`.
+
+Assuming you're using [niv](https://github.com/nmattia/niv), for example:
+
+    {
+      pkgs ? import (import ./nix/sources.nix).nixpkgs {},
+      functions ? import (import ./nix/sources.nix).ldeck-functions,
+    }:
+    ...
+
+### `darwin.installers` ###
+
+#### `darwin.installers.app` ####
 
 Installer function for a macOS app using dmg or zip.
 
 Example usage:
 
-    pkgs.callPackage functions.macOS.app rec {
+    pkgs.callPackage functions.darwin.installers.app rec {
       name = "Firefox";
       sourceRoot = "Firefox.app";
       version = "92.0";
@@ -26,27 +40,7 @@ Example usage:
       appcast = https://www.mozilla.org/en-US/firefox/releases/;
     };
 
-#### eclipseApp ####
-
-A minor variation on the app function aimed at eclipse based applications.
-
-Example usage:
-
-    pkgs.callPackage functions.macOS.eclipseApp rec {
-      name = "MAT";
-      sourceRoot = "mat.app";
-      mainVersion = with lib.versions; (majorMinor cfg.version) + "." + (patch cfg.version);
-      version = cfg.version;
-      src = pkgs.fetchurl {
-        url = "https://www.eclipse.org/downloads/download.php?r=1&file=/mat/${mainVersion}/rcp/MemoryAnalyzer-${version}-macosx.cocoa.${cfg.arch}.dmg";
-        sha256 = cfg.sha256;
-      };
-      description = "The Eclipse Memory Analyzer is a fast and feature-rich Java heap analyzer that helps you find memory leaks and reduce memory consumption.";
-      homepage = "https://www.eclipse.org/mat/";
-      appcast = "https://www.eclipse.org/mat/downloads.php";
-    };
-
-#### chromium ####
+#### `darwin.installers.chromium` ####
 
 Builds the macOS Chromium and chromedriver for the given chromeSpec.
 
@@ -79,8 +73,149 @@ Example usage:
       }.${stdenv.hostPlatform.system}
         or (throw "missing chrome platform spec for ${stdenv.hostPlatform.system}");
 
-    chrome = pkgs.callPackage functions.macOS.chromium {
+    chrome = pkgs.callPackage functions.darwin.installers.chromium {
       inherit
         pkgs
         chromeSpec
     };
+
+#### `darwin.installers.eclipseApp` ####
+
+A minor variation on the app function aimed at eclipse based applications.
+
+Example usage:
+
+    pkgs.callPackage functions.darwin.installers.eclipseApp rec {
+      name = "MAT";
+      sourceRoot = "mat.app";
+      mainVersion = with lib.versions; (majorMinor cfg.version) + "." + (patch cfg.version);
+      version = cfg.version;
+      src = pkgs.fetchurl {
+        url = "https://www.eclipse.org/downloads/download.php?r=1&file=/mat/${mainVersion}/rcp/MemoryAnalyzer-${version}-macosx.cocoa.${cfg.arch}.dmg";
+        sha256 = cfg.sha256;
+      };
+      description = "The Eclipse Memory Analyzer is a fast and feature-rich Java heap analyzer that helps you find memory leaks and reduce memory consumption.";
+      homepage = "https://www.eclipse.org/mat/";
+      appcast = "https://www.eclipse.org/mat/downloads.php";
+    };
+
+### `darwin.scripts` ###
+
+#### `darwin.scripts.enable-sudo-touchid` ####
+
+If you have a Macbook Pro with Touch ID capabilities, you can enable the use of Touch ID to authenticate sudo.
+
+Example usage:
+
+    let
+      enable-sudo-touchid = builtins.callPackage functions.darwin.scripts.enable-sudo-touchid { inherit pkgs; };
+    in pkgs.buildEnv {
+      ...
+      paths = [ enable-sudo-touchid ];
+    }
+
+#### `darwin.scripts.find-app` ####
+
+A script using fuzzy matching to find the path to an app.
+
+Usage: find-app fuzzyname...
+
+It will look in the following locations L for $L/Applications and $L/Applications/Utilities until a match is found or display the script usage.
+
+1. ~/.nix-profile/
+1. ~/
+1. /
+1. /System
+
+To add this to your packages:
+
+    let
+      find-app = builtins.callPackage functions.darwin.scripts.find-app { inherit pkgs; };
+    in pkgs.buildEnv {
+      ...
+      paths = [ find-app ];
+    }
+
+#### `darwin.scripts.idownload` ####
+
+A script to resolve icloud drive offloaded files.
+
+See my stackexchange answer for a full explanation: https://apple.stackexchange.com/a/387727/231150
+
+Usage: idownload <file|dir>
+
+Add it to your packages:
+
+    let
+      idownload = builtins.callPackage functions.darwin.scripts.idownload { inherit pkgs; };
+    in pkgs.buildEnv {
+      ...
+      paths = [ idownnload ];
+    }
+
+#### `darwin.scripts.open-app` ####
+
+macOS has a really useful `open` utility. But apps installed by nix aren't found in spotlight indexed locations.
+
+This script fills that gap by opening any app, whether installed by nix or not, and providing option args.
+
+
+Usage: open-app fuzzyname [app-args...]
+       open-app "fuzzy name..." [app-args]
+
+Add it to your packages:
+
+    let
+      open-app = builtins.callPackage functions.darwin.scripts.open-app { inherit pkgs; };
+    in pkgs.buildEnv {
+      ...
+      paths = [ open-app ];
+    }
+
+Dependencies:
+- functions.darwin.scripts.find-app
+
+## `scripts` ##
+
+### `scripts.jqo` ###
+
+The [jq](https://stedolan.github.io/jq/) utility is very useful for parsing and formatting JSON.
+
+Piping standard output to `jqo` allows for piping JSON to jq and non-JSON to stdout.
+
+Add it to your packages:
+
+    let
+      jqo = builtins.callPackage functions.scripts.jqo { inherit pkgs; };
+    in pkgs.buildEnv {
+      ...
+      paths = [ jqo ];
+    }
+
+### `scripts.markdown` ###
+
+This installs the nixpkgs.emem trivial markdown to html converter, providing a 'markdown' alias.
+
+Add it to your packages:
+
+    let
+      markdown = builtins.callPackage functions.scripts.markdown { inherit pkgs; };
+    in pkgs.buildEnv {
+      ...
+      paths = [ markdown ];
+    }
+
+### `scripts.nix-system` ###
+
+Raising issues for nix-community repositories often requires running the following:
+
+    nix-shell -p nix-info --run "nix-info -m"
+
+nix-system does this for you.
+
+    let
+      nix-system = builtins.callPackage functions.scripts.nix-system { inherit pkgs; };
+    in pkgs.buildEnv {
+      ...
+      paths = [ nix-system ];
+    }
