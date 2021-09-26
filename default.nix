@@ -12,6 +12,13 @@
       open-app = ./functions/darwin/scripts/open-app.nix;
     };
   };
+  development = {
+    tools = {
+      build-managers = {
+        maven-wrapper = ./functions/development/tools/build-managers/maven-wrapper.nix;
+      };
+    };
+  };
   scripts = {
     jqo = ./functions/utils/jqo.nix;
     markdown = ./functions/utils/markdown.nix;

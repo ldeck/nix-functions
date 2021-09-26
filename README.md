@@ -142,7 +142,7 @@ A script to resolve icloud drive offloaded files.
 
 See my stackexchange answer for a full explanation: https://apple.stackexchange.com/a/387727/231150
 
-Usage: idownload <file|dir>
+**Usage**: `idownload <file|dir>`
 
 Add it to your packages:
 
@@ -159,9 +159,8 @@ macOS has a really useful `open` utility. But apps installed by nix aren't found
 
 This script fills that gap by opening any app, whether installed by nix or not, and providing option args.
 
-
-Usage: open-app fuzzyname [app-args...]
-       open-app "fuzzy name..." [app-args]
+**Usage:** `open-app fuzzyname [app-args...]`
+       `open-app "fuzzy name..." [app-args]`
 
 Add it to your packages:
 
@@ -174,6 +173,40 @@ Add it to your packages:
 
 Dependencies:
 - functions.darwin.scripts.find-app
+
+## development ##
+
+### tools ###
+
+#### build-managers ####
+
+##### maven-wrapper #####
+
+This maven wrapper provides `mvn` and `mvnDebug` wrappers for the nixpkgs.maven executables that automatically adds a `-s path/to/nearest/.m2/settings.xml` argument to `mvn` and `mvnDebug` if such a settings.xml file exists.
+
+This is useful for being able to independently control the version of maven used for a project whilst sharing a corporate `settings.xml ` from a parent dir.
+
+It does so by searching from the provided `baseDir` upwards until `/` for a relative path `.m2/settings.xml` to exist for a parent dir. If none exists, the end result is exactly the same as calling the underlying `mvn` executable.
+
+NB: you can still specifically pass `-s path/to/another/settings.xml` or the long form equivalent `--settings` to override this as needed.
+
+Add it to your packages:
+
+    let
+      maven-wrapper = builtins.callPackage functions.development.tools.build-managers.maven-wrapper {
+        inherit pkgs;
+      };
+    in pkgs.buildEnv {
+      ...
+      paths = [ maven-wrapper ];
+    }
+
+**Module arguments:**
+- pkgs (optional)
+- jdk (optional)
+- maven (optional)
+- baseDir (required)
+
 
 ## `scripts` ##
 
