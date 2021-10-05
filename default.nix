@@ -22,6 +22,8 @@
   scripts = {
     jqo = ./functions/utils/jqo.nix;
     markdown = ./functions/utils/markdown.nix;
+    nix-store-path = ./functions/nix/nix-store-path.nix;
+    nix-tag = ./functions/nix/nix-tag.nix;
     nix-system = ./functions/nix/nix-system.nix;
   };
 }
