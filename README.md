@@ -238,6 +238,21 @@ Add it to your packages:
       paths = [ markdown ];
     }
 
+### `scripts.nix-store-path` ###
+
+Calculates the resulting store path for a given nix file.
+
+    nix-store-path hello-docker.nix
+    --> /nix/store/iai5rbg321mgbwzigr8q757r61fxb2sn-docker-image-hello-docker.tar.gz
+
+Add it to your shell:
+
+    let
+        nix-store-path = import functions.scripts.nix-store-path { inherit pkgs; };
+    in pkgs.mkShell {
+      buildInputs = [ nix-store-path ]
+    }
+
 ### `scripts.nix-system` ###
 
 Raising issues for nix-community repositories often requires running the following:
@@ -251,4 +266,20 @@ nix-system does this for you.
     in pkgs.buildEnv {
       ...
       paths = [ nix-system ];
+    }
+
+### `scripts.nix-tag` ###
+
+Calculates the nix store tag part of a derivation's name.
+This equates to the same tag automatically calculated as a docker image built with nix.
+
+    nix-tag hello-docker.nix
+    --> iai5rbg321mgbwzigr8q757r61fxb2sn
+
+Add nix-tag to your shell:
+
+    let
+        nix-tag = import functions.scripts.nix-tag { inherit pkgs; };
+    in pkgs.mkShell {
+      buildInputs = [ nix-tag ]
     }
