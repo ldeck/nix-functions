@@ -108,7 +108,7 @@ If you have a Macbook Pro with Touch ID capabilities, you can enable the use of 
 Example usage:
 
     let
-      enable-sudo-touchid = builtins.callPackage functions.darwin.scripts.enable-sudo-touchid { inherit pkgs; };
+      enable-sudo-touchid = pkgs.callPackage functions.darwin.scripts.enable-sudo-touchid { inherit pkgs; };
     in pkgs.buildEnv {
       ...
       paths = [ enable-sudo-touchid ];
@@ -130,7 +130,7 @@ It will look in the following locations L for $L/Applications and $L/Application
 To add this to your packages:
 
     let
-      find-app = builtins.callPackage functions.darwin.scripts.find-app { inherit pkgs; };
+      find-app = pkgs.callPackage functions.darwin.scripts.find-app { inherit pkgs; };
     in pkgs.buildEnv {
       ...
       paths = [ find-app ];
@@ -147,7 +147,7 @@ See my stackexchange answer for a full explanation: https://apple.stackexchange.
 Add it to your packages:
 
     let
-      idownload = builtins.callPackage functions.darwin.scripts.idownload { inherit pkgs; };
+      idownload = pkgs.callPackage functions.darwin.scripts.idownload { inherit pkgs; };
     in pkgs.buildEnv {
       ...
       paths = [ idownnload ];
@@ -165,7 +165,7 @@ This script fills that gap by opening any app, whether installed by nix or not, 
 Add it to your packages:
 
     let
-      open-app = builtins.callPackage functions.darwin.scripts.open-app { inherit pkgs; };
+      open-app = pkgs.callPackage functions.darwin.scripts.open-app { inherit pkgs; };
     in pkgs.buildEnv {
       ...
       paths = [ open-app ];
@@ -193,7 +193,7 @@ NB: you can still specifically pass `-s path/to/another/settings.xml` or the lon
 Add it to your packages:
 
     let
-      maven-wrapper = builtins.callPackage functions.development.tools.build-managers.maven-wrapper {
+      maven-wrapper = pkgs.callPackage functions.development.tools.build-managers.maven-wrapper {
         inherit pkgs;
       };
     in pkgs.buildEnv {
@@ -219,7 +219,7 @@ Piping standard output to `jqo` allows for piping JSON to jq and non-JSON to std
 Add it to your packages:
 
     let
-      jqo = builtins.callPackage functions.scripts.jqo { inherit pkgs; };
+      jqo = pkgs.callPackage functions.scripts.jqo { inherit pkgs; };
     in pkgs.buildEnv {
       ...
       paths = [ jqo ];
@@ -232,7 +232,7 @@ This installs the nixpkgs.emem trivial markdown to html converter, providing a '
 Add it to your packages:
 
     let
-      markdown = builtins.callPackage functions.scripts.markdown { inherit pkgs; };
+      markdown = pkgs.callPackage functions.scripts.markdown { inherit pkgs; };
     in pkgs.buildEnv {
       ...
       paths = [ markdown ];
@@ -262,7 +262,7 @@ Raising issues for nix-community repositories often requires running the followi
 nix-system does this for you.
 
     let
-      nix-system = builtins.callPackage functions.scripts.nix-system { inherit pkgs; };
+      nix-system = pkgs.callPackage functions.scripts.nix-system { inherit pkgs; };
     in pkgs.buildEnv {
       ...
       paths = [ nix-system ];
