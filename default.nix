@@ -4,6 +4,7 @@
       app = ./functions/darwin/installers/app.nix;
       chromium = ./functions/darwin/installers/chromium.nix;
       eclipseApp = ./functions/darwin/installers/eclipseApp.nix;
+      firefox = ./functions/darwin/installers/firefox.nix;
     };
     scripts = {
       enable-sudo-touchid = ./functions/darwin/scripts/enable-sudo-touchid.nix;
