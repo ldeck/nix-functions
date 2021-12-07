@@ -7,6 +7,8 @@
   undmg,
 }:
 
+with pkgs;
+
 stdenv.mkDerivation rec {
   pname = "Firefox";
   version = version;
@@ -25,7 +27,7 @@ stdenv.mkDerivation rec {
     sha256 = sha256;
   };
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "The Firefox web browser";
     homepage = "https://www.mozilla.org/en-GB/firefox";
     maintainers = [ "ldeck" ];
