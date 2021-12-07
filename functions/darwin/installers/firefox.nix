@@ -9,9 +9,15 @@
 
 with pkgs;
 
+let
+  browserVersion = version;
+  browserSha256 = sha256;
+
+in
+
 stdenv.mkDerivation rec {
   pname = "Firefox";
-  version = version;
+  version = browserVersion;
 
   buildInputs = [ undmg ];
   sourceRoot = ".";
@@ -24,7 +30,7 @@ stdenv.mkDerivation rec {
   src = fetchurl {
     name = "Firefox-${version}.dmg";
     url = "https://download-installer.cdn.mozilla.net/pub/firefox/releases/${version}/mac/en-GB/Firefox%20${version}.dmg";
-    sha256 = sha256;
+    sha256 = browserSha256;
   };
 
   meta = with lib; {
